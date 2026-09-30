@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa Digital do Curso - Bacharelado em Sistemas de Informação | IFMG Campus Ouro Branco</title>
+  <meta name="description" content="Mapa digital interativo do curso de Bacharelado em Sistemas de Informação do IFMG Campus Ouro Branco. Matriz curricular oficial, eixos de formacao e trajetorias de carreira de TI.">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <!-- CABECALHO INSTITUCIONAL -->
+  <header class="app-header" role="banner">
+    <div class="header-container">
+      <div class="header-brand">
+        <img src="./assets/logo-ifmg.svg" alt="Logotipo IFMG Campus Ouro Branco" class="header-logo" width="220" height="52">
+        <div class="header-titles">
+          <span class="header-badge">Matriz Curricular Oficial (PPC)</span>
+          <h1 class="header-title">Bacharelado em Sistemas de Informação</h1>
+          <p class="header-subtitle">Instituto Federal de Minas Gerais &bull; Campus Ouro Branco &bull; Resolucao No 016/2017</p>
+        </div>
+      </div>
+
+      <!-- METRICAS RESUMIDAS DO CURSO -->
+      <div class="header-stats" aria-label="Estatisticas do Curso">
+        <div class="stat-item">
+          <span class="stat-number">3.004h</span>
+          <span class="stat-label">Carga Horaria</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">8</span>
+          <span class="stat-label">Semestres</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">37</span>
+          <span class="stat-label">Obrigatorias</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">6</span>
+          <span class="stat-label">Eixos de Ensino</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">10</span>
+          <span class="stat-label">Trilhas de Carreira</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BARRA DE CONTROLE: FILTROS, BUSCA E MODOS -->
+    <div class="toolbar" role="region" aria-label="Barra de Ferramentas e Filtros">
+      <div class="toolbar-container">
+        <!-- SELETOR DE MODO DE VISAO -->
+        <div class="view-mode-selector" role="radiogroup" aria-label="Modo de Visualizacao">
+          <button type="button" class="btn-mode active" data-mode="matriz" role="radio" aria-checked="true" id="btn-mode-matriz">
+            <span class="mode-icon">&boxbox;</span>
+            <span class="mode-text">Matriz Curricular (Semestres)</span>
+          </button>
+          <button type="button" class="btn-mode" data-mode="carreiras" role="radio" aria-checked="false" id="btn-mode-carreiras">
+            <span class="mode-icon">&parsim;</span>
+            <span class="mode-text">Trilhas de Carreira (Roadmap)</span>
+          </button>
+          <button type="button" class="btn-mode" data-mode="integrada" role="radio" aria-checked="false" id="btn-mode-integrada">
+            <span class="mode-icon">&bull;&mdash;&bull;</span>
+            <span class="mode-text">Conexoes Interativas</span>
+          </button>
+        </div>
+
+        <!-- CAMPO DE BUSCA REATIVO -->
+        <div class="search-box">
+          <label for="search-input" class="sr-only">Buscar por disciplina, codigo, competencia ou carreira</label>
+          <span class="search-icon" aria-hidden="true">&telrec;</span>
+          <input 
+            type="search" 
+            id="search-input" 
+            class="search-input" 
+            placeholder="Buscar por disciplina, codigo (OBBGSIN), competencia ou tecnologia..." 
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button type="button" id="btn-clear-search" class="btn-clear-search" title="Limpar busca" aria-label="Limpar campo de busca" hidden>&times;</button>
+        </div>
+
+        <!-- BOTAO LIMPAR FILTROS GLOBAIS -->
+        <button type="button" id="btn-reset-filters" class="btn-reset" title="Restaurar visualizacao padrao">
+          Restaurar Filtros
+        </button>
+      </div>
+
+      <!-- FILTRO RAPIDO POR EIXOS DE FORMACAO -->
+      <nav class="axis-filter-bar" aria-label="Filtro por Eixos de Formacao">
+        <span class="filter-label">Filtrar Eixo:</span>
+        <div class="axis-filter-list" id="axis-filter-list">
+          <!-- Gerado dinamicamente via JS -->
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTEUDO PRINCIPAL: AREA DE VISUALIZACAO E PAINEL LATERAL -->
+  <main class="main-container" id="main-content">
+    
+    <!-- AREA VISUAL (ESQUERDA - 70%) -->
+    <section class="viewport-section" aria-label="Area Visual do Mapa Curricular">
+      
+      <!-- INDICADOR DO STATUS ATIVO / FILTRO -->
+      <div class="status-banner" id="status-banner" role="status" aria-live="polite">
+        <div class="status-content">
+          <span class="status-badge" id="status-badge">Visao Geral</span>
+          <span class="status-message" id="status-message">Exibindo todos os 8 periodos e disciplinas do curso. Clique em qualquer cartao para detalhar.</span>
+        </div>
+        <button type="button" id="btn-banner-clear" class="btn-banner-clear" hidden>Desmarcar Selecao</button>
+      </div>
+
+      <!-- CONTAINER DO MAPA COM OVERLAY SVG -->
+      <div class="map-wrapper" id="map-wrapper">
+        
+        <!-- CAMADA SVG DE CONEXOES INTERATIVAS -->
+        <svg class="connections-overlay" id="connections-svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="conn-grad-primary" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#0284c7" stop-opacity="0.8" />
+              <stop offset="100%" stop-color="#006633" stop-opacity="0.9" />
+            </linearGradient>
+            <marker id="arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#0284c7" />
+            </marker>
+          </defs>
+          <g id="svg-paths-group"></g>
+        </svg>
+
+        <!-- VISAO 1: MATRIZ CURRICULAR (GRID POR PERIODOS) -->
+        <div class="view-panel active" id="view-matriz" role="tabpanel" aria-labelledby="btn-mode-matriz">
+          <div class="grid-semestres" id="grid-semestres">
+            <!-- As colunas dos 8 semestres serao renderizadas aqui pelo app.js -->
+          </div>
+
+          <!-- SECAO EXTRA: COMPONENTES COMPLEMENTARES E EXTENSAO -->
+          <div class="curriculum-components-bar">
+            <h2 class="components-title">Componentes Curriculares Integradores Obrigatorios (PPC)</h2>
+            <div class="components-grid">
+              <div class="component-card">
+                <div class="component-header">
+                  <span class="component-tag">Extensao Obrigatoria</span>
+                  <span class="component-hours">320 Horas</span>
+                </div>
+                <h3 class="component-name">Projeto Integrador (Extensao)</h3>
+                <p class="component-desc">Atividades curriculares continuadas de carater extensionista que integram discentes com a comunidade e empresas da regiao de Ouro Branco.</p>
+              </div>
+
+              <div class="component-card">
+                <div class="component-header">
+                  <span class="component-tag">Formacao Livre</span>
+                  <span class="component-hours">220 Horas</span>
+                </div>
+                <h3 class="component-name">Atividades Complementares (AC)</h3>
+                <p class="component-desc">Participacao em projetos de iniciacao cientifica (SICEx), monitoria, semanas academicas, cursos de extensao, maratonas de programacao e visitas tecnicas.</p>
+              </div>
+
+              <div class="component-card">
+                <div class="component-header">
+                  <span class="component-tag">Trilha Flexivel</span>
+                  <span class="component-hours">256 Horas</span>
+                </div>
+                <h3 class="component-name">Disciplinas Optativas (4 disciplinas)</h3>
+                <p class="component-desc">O estudante cursa 4 disciplinas optativas (64h cada) entre o 5o e o 8o periodos, especializando-se em Banco de Dados, Redes, IA ou Gestao.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VISAO 2: TRILHAS DE CARREIRA (ROADMAP) -->
+        <div class="view-panel" id="view-carreiras" role="tabpanel" aria-labelledby="btn-mode-carreiras" hidden>
+          <div class="carreiras-header-info">
+            <h2 class="carreiras-section-title">Trajetorias Profissionais &bull; Perfil do Egresso BSI IFMG</h2>
+            <p class="carreiras-section-subtitle">
+              Selecione uma carreira para iluminar sua trilha de disciplinas no curso, compreender as competencias exigidas pelo mercado e conhecer o grau de alinhamento com a matriz do IFMG Campus Ouro Branco.
+            </p>
+          </div>
+          <div class="grid-carreiras" id="grid-carreiras">
+            <!-- Cartões de Carreiras serao injetados dinamicamente via app.js -->
+          </div>
+        </div>
+
+        <!-- VISAO 3: CONEXOES INTERATIVAS (MATRIZ + LISTA DE CARREIRAS EXPANDIDA) -->
+        <div class="view-panel" id="view-integrada" role="tabpanel" aria-labelledby="btn-mode-integrada" hidden>
+          <div class="integrated-layout">
+            <div class="integrated-col-left">
+              <h3 class="integrated-col-title">Disciplinas do Curso (Selecione para ver conexoes)</h3>
+              <div class="integrated-disciplinas-container" id="integrated-disciplinas-list">
+                <!-- Lista condensada de disciplinas agrupadas por periodo -->
+              </div>
+            </div>
+            <div class="integrated-col-right">
+              <h3 class="integrated-col-title">Caminhos de Carreira Associados</h3>
+              <div class="integrated-carreiras-container" id="integrated-carreiras-list">
+                <!-- Lista condensada de carreiras -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PAINEL LATERAL DE DETALHES (DIREITA - 30%) -->
+    <aside class="sidebar-section" id="sidebar-panel" aria-label="Painel de Detalhes e Informacoes">
+      <div class="sidebar-sticky" id="sidebar-content">
+        <!-- Conteudo atualizado dinamicamente via app.js (Disciplina, Carreira ou Visao Geral) -->
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- RODAPE INSTITUCIONAL E LEGENDA DE CORES -->
+  <footer class="app-footer" role="contentinfo">
+    <div class="footer-container">
+      
+      <!-- LEGENDA COMPLETA DOS EIXOS FORMATIVOS -->
+      <section class="footer-legend" aria-label="Legenda de Eixos de Formacao">
+        <h3 class="legend-title">Eixos de Formacao Curricular (Resolucao CNE/CES No 05/2016 e PPC IFMG):</h3>
+        <div class="legend-items" id="footer-legend-items">
+          <!-- Renderizado dinamicamente via JS com as cores exatas do PPC -->
+        </div>
+      </section>
+
+      <!-- INFORMACOES INSTITUCIONAIS E REFERENCIAS -->
+      <section class="footer-bottom">
+        <div class="footer-info">
+          <p class="footer-text">
+            <strong>Instituto Federal de Educacao, Ciencia e Tecnologia de Minas Gerais &bull; Campus Ouro Branco</strong>
+          </p>
+          <p class="footer-text-secondary">
+            Curso de Bacharelado em Sistemas de Informacao &bull; Carga Horaria Total: 3.004 horas &bull; Modalidade Presencial Noturno &bull; 50 Vagas Anuais.
+          </p>
+          <p class="footer-text-secondary">
+            Documento Norteador: Projeto Pedagogico de Curso (PPC) - Aprovado pela Resolucao No 016/2017 e alteracoes vigentes.
+          </p>
+        </div>
+
+        <div class="footer-academic-meta">
+          <span class="academic-badge">Sistemas de Apoio a Decisao</span>
+          <span class="academic-badge">Projeto Academico 2026</span>
+        </div>
+      </section>
+
+    </div>
+  </footer>
+
+  <!-- MODAL ACADEMICO DE DETALHES (ACESSIBILIDADE / MOBILE EXPANDIDO) -->
+  <div class="modal-overlay" id="modal-details" hidden aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Detalhes do Componente</h2>
+        <button type="button" class="modal-close" id="btn-modal-close" aria-label="Fechar janela de detalhes">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Preenchido dinamicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="./js/data.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
