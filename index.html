@@ -4,148 +4,90 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mapa Conceitual BSI IFMG - Campus Ouro Branco</title>
-  <meta name="description" content="Mapa conceitual academico do Bacharelado em Sistemas de Informacao do IFMG Campus Ouro Branco. Mapeamento de carreiras em TI e matriz curricular oficial.">
+  <meta name="description" content="Trilhas de carreira e disciplinas do Bacharelado em Sistemas de Informação do IFMG Campus Ouro Branco.">
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-
-  <!-- CABECALHO COMPACTO E EDITORIAL -->
-  <header class="site-header" role="banner">
-    <div class="header-inner">
-      <div class="header-brand">
-        <svg class="brand-logo" viewBox="0 0 320 72" width="160" height="36" aria-label="Logo IFMG">
-          <g transform="translate(2, 6)">
-            <circle cx="8" cy="8" r="8" fill="#C8102E" />
-            <rect x="0" y="21" width="16" height="16" rx="3" fill="#006633" />
-            <rect x="0" y="42" width="16" height="16" rx="3" fill="#006633" />
-            <rect x="21" y="0" width="16" height="16" rx="3" fill="#006633" />
-            <rect x="21" y="21" width="16" height="16" rx="3" fill="#006633" />
-            <rect x="21" y="42" width="16" height="16" rx="3" fill="#006633" />
-            <rect x="42" y="0" width="16" height="16" rx="3" fill="#006633" />
-            <rect x="42" y="21" width="16" height="16" rx="3" fill="#006633" />
-            <rect x="42" y="42" width="16" height="16" rx="3" fill="#006633" />
-          </g>
-          <g transform="translate(74, 25)" font-family="system-ui, -apple-system, sans-serif">
-            <text x="0" y="0" font-size="15" font-weight="800" fill="#006633" letter-spacing="0.5">INSTITUTO FEDERAL</text>
-            <text x="0" y="16" font-size="12" font-weight="600" fill="#333333">Minas Gerais &bull; Ouro Branco</text>
-          </g>
-        </svg>
-        <h1 class="brand-title">Mapa Conceitual BSI IFMG - Campus Ouro Branco</h1>
-      </div>
-      <div class="header-meta">
-        <span class="meta-tag">PPC Oficial</span>
-        <span class="meta-info">Bacharelado em Sistemas de Informação &bull; 3.004h &bull; 8 Semestres</span>
+  <header class="app-header">
+    <div class="header-container">
+      <div>
+        <p class="header-eyebrow">Bacharelado em Sistemas de Informação</p>
+        <h1>Mapa Conceitual BSI IFMG - Campus Ouro Branco</h1>
       </div>
     </div>
   </header>
 
-  <!-- CONTEUDO PRINCIPAL COM HIERARQUIA EDITORIAL -->
-  <main class="page-main" id="main-content" role="main">
-
-    <!-- 1. TRILHAS DE CARREIRA (PONTO CENTRAL DE ENTRADA) -->
-    <section class="section-carreiras" aria-labelledby="titulo-carreiras">
-      <div class="section-header">
-        <div class="section-header-titles">
-          <h2 class="section-title" id="titulo-carreiras">Trilhas de Carreira</h2>
-          <p class="section-lead">Selecione uma trajetória profissional para mapear as disciplinas correspondentes na formação acadêmica.</p>
+  <main class="main-container" id="main-content">
+    <section class="careers-section" aria-labelledby="careers-title">
+      <div class="section-heading">
+        <div>
+          <p class="section-number">01 / Explorar</p>
+          <h2 id="careers-title">Trilhas de Carreira</h2>
         </div>
-        <button type="button" id="btn-limpar-carreira" class="btn-clear-selection" hidden>
-          Limpar seleção
-        </button>
+        <p>Selecione uma carreira para ver suas disciplinas na formação do curso.</p>
       </div>
+      <div class="grid-carreiras" id="grid-carreiras"></div>
+    </section>
 
-      <div class="carreiras-selector" id="carreiras-selector" role="radiogroup" aria-label="Trajetorias profissionais">
-        <!-- Injetado dinamicamente via app.js -->
+    <div class="content-layout" id="content-layout">
+      <div class="visualization-area">
+        <div class="view-toolbar">
+          <div class="view-switch" role="group" aria-label="Visualização do mapa">
+            <button type="button" class="view-button active" data-view="connections" aria-pressed="true" aria-controls="connections-view">Conexões Interativas</button>
+            <button type="button" class="view-button" data-view="matrix" aria-pressed="false" aria-controls="matrix-view">Matriz Curricular</button>
+          </div>
+          <div class="view-actions">
+            <button type="button" id="btn-toggle-details" class="text-button" aria-controls="sidebar-panel" aria-expanded="false" hidden>Ver disciplina</button>
+            <button type="button" id="btn-toggle-career" class="text-button" aria-controls="career-panel" aria-expanded="false" hidden>Ver carreira</button>
+            <button type="button" id="btn-banner-clear" class="text-button" hidden>Limpar seleção</button>
+          </div>
+        </div>
+
+    <section class="connections-section" id="connections-view" aria-labelledby="connections-title">
+      <div class="section-heading">
+        <div>
+          <p class="section-number">02 / Relacionar</p>
+          <h2 id="connections-title">Conexões Interativas</h2>
+        </div>
+      </div>
+      <div class="connections-empty" id="connections-empty">Selecione uma carreira para visualizar suas disciplinas relacionadas.</div>
+      <div class="connections-board" id="connections-board" hidden>
+        <svg class="connections-overlay" id="connections-svg" aria-hidden="true"><g id="svg-paths-group"></g></svg>
+        <div class="connection-source" id="connection-source"></div>
+        <div class="integrated-disciplinas-container" id="integrated-disciplinas-list"></div>
       </div>
     </section>
 
-    <!-- 2. CONEXOES INTERATIVAS (DERIVADAS DIRETAMENTE DA CARREIRA) -->
-    <section class="section-conexoes" aria-labelledby="titulo-conexoes">
-      <div class="section-header">
-        <div class="section-header-titles">
-          <h2 class="section-title" id="titulo-conexoes">Conexões Interativas</h2>
-          <p class="section-lead" id="conexoes-lead">Relação direta entre a carreira selecionada e seus componentes curriculares.</p>
+    <section class="curriculum-section" id="matrix-view" aria-labelledby="curriculum-title" hidden>
+      <div class="section-heading">
+        <div>
+          <p class="section-number">02 / Localizar</p>
+          <h2 id="curriculum-title">Matriz Curricular</h2>
         </div>
-        <div class="conexoes-status" id="conexoes-status" aria-live="polite">
-          <!-- Status textual conciso -->
-        </div>
+        <p id="matrix-note">Selecione uma carreira para destacar as disciplinas na matriz.</p>
       </div>
-
-      <!-- Container estritamente delimitado para o diagrama -->
-      <div class="conexoes-canvas-container" id="conexoes-container">
-        
-        <!-- Camada SVG de conexões estritamente contida no container -->
-        <svg class="conexoes-svg" id="conexoes-svg" aria-hidden="true">
-          <defs>
-            <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 1 L 8 5 L 0 9 z" fill="#006633" />
-            </marker>
-          </defs>
-          <g id="svg-connections-layer"></g>
-        </svg>
-
-        <!-- Area de conteudo das conexoes (estado vazio ou diagrama da carreira) -->
-        <div class="conexoes-content" id="conexoes-content">
-          <!-- Injetado dinamicamente via app.js -->
+      <div class="grid-semestres" id="grid-semestres"></div>
+      <div class="optativas-panel" id="optativas-panel" hidden></div>
+      <div class="curriculum-components-bar">
+        <h3>Componentes curriculares integradores</h3>
+        <div class="components-grid">
+          <div><strong>Projeto Integrador (Extensão)</strong><span>320 horas</span></div>
+          <div><strong>Atividades Complementares</strong><span>220 horas</span></div>
+          <div><strong>Disciplinas Optativas</strong><span>4 disciplinas · 256 horas</span></div>
         </div>
-
       </div>
     </section>
-
-    <!-- 3. MATRIZ CURRICULAR (VISAO GERAL COM DESTAQUE REATIVO) -->
-    <section class="section-matriz" aria-labelledby="titulo-matriz">
-      <div class="section-header">
-        <div class="section-header-titles">
-          <h2 class="section-title" id="titulo-matriz">Matriz Curricular</h2>
-          <p class="section-lead">Visão geral do curso por períodos. As disciplinas da carreira selecionada são destacadas no percurso.</p>
-        </div>
       </div>
 
-      <!-- Grade dos 8 semestres sem linhas sobrepostas -->
-      <div class="matriz-grid" id="matriz-grid">
-        <!-- As 8 colunas de semestres serao renderizadas aqui via app.js -->
-      </div>
-    </section>
-
+    <aside class="details-section" id="sidebar-panel" aria-label="Detalhes da disciplina" hidden>
+      <div id="sidebar-content" class="detail-content"></div>
+    </aside>
+    </div>
   </main>
 
-  <!-- MODAL / INSPETOR DISCRETO DE DETALHES DA DISCIPLINA -->
-  <div class="modal-backdrop" id="modal-disciplina" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-disc-titulo">
-    <div class="modal-sheet">
-      <div class="modal-sheet-header">
-        <div class="modal-disc-badge-row">
-          <span class="disc-code-badge" id="modal-disc-codigo">OBBGSIN.000</span>
-          <span class="disc-period-badge" id="modal-disc-periodo">1º Período</span>
-          <span class="disc-hours-badge" id="modal-disc-ch">64 Horas</span>
-          <span class="disc-eixo-badge" id="modal-disc-eixo">Formação</span>
-        </div>
-        <h3 class="modal-sheet-title" id="modal-disc-titulo">Nome da Disciplina</h3>
-        <button type="button" class="modal-close-btn" id="btn-modal-fechar" aria-label="Fechar detalhes">&times;</button>
-      </div>
-
-      <div class="modal-sheet-body">
-        <div class="modal-section" id="modal-secao-prereq">
-          <h4 class="modal-section-label">Pré-requisitos</h4>
-          <p class="modal-text" id="modal-disc-prereq">Nenhum pré-requisito obrigatório.</p>
-        </div>
-
-        <div class="modal-section">
-          <h4 class="modal-section-label">Ementa Oficial (PPC IFMG Campus Ouro Branco)</h4>
-          <p class="modal-text modal-ementa-text" id="modal-disc-ementa"></p>
-        </div>
-
-        <div class="modal-section">
-          <h4 class="modal-section-label">Competências Desenvolvidas</h4>
-          <ul class="modal-list" id="modal-disc-competencias"></ul>
-        </div>
-
-        <div class="modal-section">
-          <h4 class="modal-section-label">Carreiras Beneficiadas</h4>
-          <div class="modal-chips-row" id="modal-disc-carreiras"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <aside class="career-panel" id="career-panel" aria-label="Detalhes da trilha de carreira" hidden>
+    <div id="career-content" class="detail-content"></div>
+  </aside>
 
   <script src="./js/data.js"></script>
   <script src="./js/app.js"></script>
